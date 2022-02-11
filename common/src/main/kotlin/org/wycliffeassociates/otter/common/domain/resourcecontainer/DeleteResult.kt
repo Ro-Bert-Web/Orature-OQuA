@@ -16,16 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Orature.  If not, see <https://www.gnu.org/licenses/>.
  */
-package org.wycliffeassociates.otter.common.data.workbook
+package org.wycliffeassociates.otter.common.domain.resourcecontainer
 
-import org.wycliffeassociates.otter.common.data.primitives.Language
-import java.time.LocalDateTime
-
-data class Translation(
-    var source: Language,
-    var target: Language,
-    var modifiedTs: LocalDateTime?,
-    var sourceRate: Double = 1.0,
-    var targetRate: Double = 1.0,
-    var id: Int = 0
-)
+enum class DeleteResult {
+    SUCCESS,
+    DEPENDENCY_EXISTS,
+    NOT_FOUND
+}
