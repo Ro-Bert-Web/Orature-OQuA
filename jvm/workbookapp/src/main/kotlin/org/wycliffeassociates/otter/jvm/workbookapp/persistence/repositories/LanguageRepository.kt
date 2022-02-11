@@ -151,6 +151,15 @@ class LanguageRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
     }
 
+    override fun getTranslation(sourceLanguage: Language, targetLanguage: Language): Single<Translation> {
+        return Single.fromCallable {
+            val translation = translationDao
+                .fetchBySourceAndTarget(sourceLanguage.id, targetLanguage.id)
+
+            translationMapper.mapFromEntity(translation, sourceLanguage, targetLanguage)
+        }
+    }
+
     override fun getAllTranslations(): Single<List<Translation>> {
         return Single.fromCallable {
             translationDao.fetchAll()
@@ -167,7 +176,8 @@ class LanguageRepository @Inject constructor(
     override fun insertTranslation(translation: Translation): Single<Int> {
         return Single
             .fromCallable {
-                translationDao.insert(translationMapper.mapToEntity(translation))
+                val existing = translationDao.fetch(translation.source.id, translation.target.id)
+                existing?.id ?: translationDao.insert(translationMapper.mapToEntity(translation))
             }
             .doOnError { e ->
                 logger.error("Error in insert for translation: $translation", e)
