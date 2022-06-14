@@ -72,7 +72,7 @@ class OtterApp : App(RootView::class), IDependencyGraphProvider {
                 SnackbarHandler.enqueue(messages["applicationCloseBlocked"])
             } else audioConnectionFactory.releasePlayer()
         }
-        find<SplashScreen>().openModal(StageStyle.UNDECORATED)
+        find<SplashScreen>().openModal(StageStyle.TRANSPARENT)
     }
 
     override fun onBeforeShow(view: UIComponent) {

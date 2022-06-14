@@ -18,6 +18,7 @@
  */
 package org.wycliffeassociates.otter.jvm.workbookapp.ui.styles
 
+import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import tornadofx.*
 
@@ -29,6 +30,7 @@ class SplashScreenStyles : Stylesheet() {
 
     init {
         splashRoot {
+            backgroundColor += Color.TRANSPARENT
             splashProgress {
                 bar {
                     backgroundInsets += CssBox(1.px, 1.px, 1.px, 1.px)

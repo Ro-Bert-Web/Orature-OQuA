@@ -20,6 +20,11 @@ package org.wycliffeassociates.otter.jvm.workbookapp.ui.screens.dialogs
 
 import com.github.thomasnield.rxkotlinfx.observeOnFx
 import javafx.geometry.Pos
+import javafx.scene.effect.BlurType
+import javafx.scene.effect.DropShadow
+import javafx.scene.paint.Color
+import javafx.scene.paint.ImagePattern
+import javafx.scene.shape.Rectangle
 import org.wycliffeassociates.otter.jvm.workbookapp.ui.NavigationMediator
 import org.wycliffeassociates.otter.jvm.workbookapp.ui.components.drawer.ThemeColorEvent
 import org.wycliffeassociates.otter.jvm.workbookapp.ui.screens.HomePage
@@ -33,11 +38,29 @@ class SplashScreen : View() {
     private val settingsViewModel: SettingsViewModel by inject()
     private val navigator: NavigationMediator by inject()
 
+    override fun onDock() {
+        super.onDock()
+        root.scene.fill = Color.TRANSPARENT
+    }
+
     override val root = stackpane {
         addStylesheet(SplashScreenStyles::class)
         addClass(SplashScreenStyles.splashRoot)
         alignment = Pos.TOP_CENTER
-        add(resources.imageview("/orature_splash.png"))
+
+        prefWidth = 676.0
+        prefHeight = 580.0
+
+        // 576 x 480
+        val rect = Rectangle(576.0, 480.0)
+        rect.arcHeight = 30.0
+        rect.arcWidth = 30.0
+
+        rect.effect = DropShadow(BlurType.GAUSSIAN, Color.BLACK, 20.0, 0.0, 3.0, 3.0)
+        val img = ImagePattern(resources.image("/orature_splash.png"))
+        rect.fill = img
+        add(rect)
+
         progressbar(viewModel.progressProperty) {
             addClass(SplashScreenStyles.splashProgress)
             prefWidth = 376.0
