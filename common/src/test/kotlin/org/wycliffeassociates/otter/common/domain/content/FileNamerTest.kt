@@ -37,11 +37,11 @@ class FileNamerTest {
         rcSlug = "tn"
     )
 
-    private fun createFileNamer(start: Int?, end: Int?, chunkCount: Long) = FileNamer(
+    private fun createFileNamer(start: Int?, end: Int?, chunkCount: Long, sort: Int?) = FileNamer(
         start = start,
         end = end,
         chunkCount = chunkCount,
-        sort = 0,
+        sort = sort,
         contentType = ContentType.BODY,
         languageSlug = "en",
         bookSlug = "gen",
@@ -85,36 +85,26 @@ class FileNamerTest {
         }
     }
 
-    data class FormatVerseNumberTestCase(val start: Int?, val end: Int?, val chunkCount: Int)
-    private fun fvnCase(start: Int?, end: Int?, chunkCount: Int) =
-        FormatVerseNumberTestCase(start, end, chunkCount)
+    data class FormatVerseNumberTestCase(val sort: Int?, val start: Int?, val end: Int?, val chunkCount: Int)
+    private fun fvnCase(sort: Int?, start: Int?, end: Int?, chunkCount: Int) =
+        FormatVerseNumberTestCase(sort, start, end, chunkCount)
     @Test
     fun testFormatVerseNumber() {
         // first: Recordable.start, second: Recordable.end, third: chunkCount
         mapOf(
             // start == null
-            fvnCase(null, null, 10) to null,
+            fvnCase(null, null, null, 10) to null,
             // start == end
             //      chunkCount < 100
-            fvnCase(4, 4, 10) to "v04",
-            fvnCase(4, 4, 99) to "v04",
+            fvnCase(4, 4, 4, 10) to "v04",
+            fvnCase(4, 4, 4, 99) to "v04",
             //      chunkCount >= 100
-            fvnCase(4, 4, 100) to "v004",
-            fvnCase(10, 10, 100) to "v010",
-            fvnCase(4, 4, 101) to "v004",
-            fvnCase(100, 100, 101) to "v100",
-            // start != end
-            //      chunkCount < 100
-            fvnCase(4, 5, 10) to "v04-05",
-            fvnCase(4, 5, 99) to "v04-05",
-            fvnCase(10, 20, 99) to "v10-20",
-            //      chunkCount >= 100
-            fvnCase(4, 5, 100) to "v004-005",
-            fvnCase(4, 25, 120) to "v004-025",
-            fvnCase(10, 20, 120) to "v010-020",
-            fvnCase(10, 120, 120) to "v010-120"
+            fvnCase(4, 4, 4, 100) to "v004",
+            fvnCase(10, 10, 10, 100) to "v010",
+            fvnCase(4, 4, 4, 101) to "v004",
+            fvnCase(100, 100, 100, 101) to "v100",
         ).assertEqualsForEach {
-            val fileNamer = createFileNamer(it.start, it.end, it.chunkCount.toLong())
+            val fileNamer = createFileNamer(it.start, it.end, it.chunkCount.toLong(), it.sort)
             fileNamer.formatVerseNumber()
         }
     }
