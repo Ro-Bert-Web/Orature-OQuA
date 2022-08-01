@@ -96,6 +96,7 @@ class ChapterViewModel : ViewModel() {
                         && (question.answer == loadedReview.answer)
             }?.run {
                 question.review = this.review
+                question.explanation = this.explanation
             }
         }
     }

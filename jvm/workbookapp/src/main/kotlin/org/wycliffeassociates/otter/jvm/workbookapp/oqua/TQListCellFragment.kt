@@ -72,6 +72,13 @@ class TQListCellFragment: ListCellFragment<Question>() {
         textfield {
             visibleWhen(invalidButton.selectedProperty())
             managedWhen(visibleProperty())
+
+            itemProperty.onChange {
+                text = it?.explanation
+            }
+            textProperty().onChange {
+                item?.explanation = it
+            }
         }
     }
 }

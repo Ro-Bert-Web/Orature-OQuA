@@ -36,6 +36,7 @@ data class Question(
             ?.text
 
     var review: String? = null
+    var explanation: String? = null
 
     override fun equals(other: Any?): Boolean =
         (other is Question)
