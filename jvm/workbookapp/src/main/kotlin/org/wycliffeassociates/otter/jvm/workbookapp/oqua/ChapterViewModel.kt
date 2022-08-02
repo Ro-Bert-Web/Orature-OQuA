@@ -118,9 +118,11 @@ class ChapterViewModel : ViewModel() {
     }
 
     fun jumpToVerse(verse: Int) {
-        val frame = getVerseFrame(verse)
-        audioPlayerProperty.value.seek(frame)
-        audioPlayerProperty.value.play()
+        if (verse > 0 && verse <= verseMarkerModel.markers.size) {
+            val frame = getVerseFrame(verse)
+            audioPlayerProperty.value.seek(frame)
+            audioPlayerProperty.value.play()
+        }
     }
 
     private fun getVerseFrame(verse: Int): Int {
