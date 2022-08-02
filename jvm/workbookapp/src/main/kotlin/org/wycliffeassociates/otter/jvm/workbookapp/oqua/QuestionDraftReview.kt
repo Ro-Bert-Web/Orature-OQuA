@@ -5,8 +5,7 @@ data class QuestionDraftReview (
     val answer: String?,
     val start: Int,
     val end: Int,
-    val review: String?,
-    val explanation: String?
+    val result: QuestionResult
 ) {
     companion object {
         fun mapFromQuestion(question: Question): QuestionDraftReview {
@@ -15,8 +14,7 @@ data class QuestionDraftReview (
                 question.answer,
                 question.start,
                 question.end,
-                question.review,
-                question.explanation
+                question.result
             )
         }
     }

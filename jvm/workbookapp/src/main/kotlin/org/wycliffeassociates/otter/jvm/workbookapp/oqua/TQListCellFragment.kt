@@ -46,26 +46,26 @@ class TQListCellFragment: ListCellFragment<Question>() {
         hbox {
             correctButton = togglebutton("Correct", toggleGroup) {
                 action {
-                    item.review = "correct"
+                    item.result.result = ResultValue.CORRECT
                 }
             }
             incorrectButton = togglebutton("Incorrect", toggleGroup) {
                 action {
-                    item.review = "incorrect"
+                    item.result.result = ResultValue.INCORRECT
                 }
             }
-            invalidButton = togglebutton("Invalid", toggleGroup) {
+            invalidButton = togglebutton("Invalid Question", toggleGroup) {
                 action {
-                    item.review = "invalid"
+                    item.result.result = ResultValue.INVALID_QUESTION
                 }
             }
 
             itemProperty.onChange {
-                when (it?.review) {
-                    "correct" -> toggleGroup.selectToggle(correctButton)
-                    "incorrect" -> toggleGroup.selectToggle(incorrectButton)
-                    "invalid" -> toggleGroup.selectToggle(invalidButton)
-                    else -> toggleGroup.selectToggle(null)
+                when (it?.result?.result) {
+                    ResultValue.CORRECT -> toggleGroup.selectToggle(correctButton)
+                    ResultValue.INCORRECT -> toggleGroup.selectToggle(incorrectButton)
+                    ResultValue.INVALID_QUESTION -> toggleGroup.selectToggle(invalidButton)
+                    ResultValue.UNANSWERED -> toggleGroup.selectToggle(null)
                 }
             }
         }
@@ -74,10 +74,10 @@ class TQListCellFragment: ListCellFragment<Question>() {
             managedWhen(visibleProperty())
 
             itemProperty.onChange {
-                text = it?.explanation
+                text = it?.result?.explanation
             }
             textProperty().onChange {
-                item?.explanation = it
+                item?.result?.explanation = it ?: ""
             }
         }
     }
