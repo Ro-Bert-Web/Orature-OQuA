@@ -17,6 +17,10 @@
     -fx-border-color: blue;
 }
 
+.oqua-question-text {
+    -fx-font-weight: bold
+}
+
 .list-cell {
     -fx-background-color: white;
 }

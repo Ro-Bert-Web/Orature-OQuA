@@ -35,7 +35,7 @@ data class Question(
             ?.textItem
             ?.text
 
-    var review: String? = null
+    var result = QuestionResult()
 
     override fun equals(other: Any?): Boolean =
         (other is Question)

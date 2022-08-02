@@ -1,6 +1,7 @@
 package org.wycliffeassociates.otter.jvm.workbookapp.oqua
 
 import javafx.beans.binding.Bindings
+import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import tornadofx.*
 
@@ -24,6 +25,10 @@ class TQListCellFragment: ListCellFragment<Question>() {
         itemProperty
     )
 
+    lateinit var correctButton: ToggleButton
+    lateinit var incorrectButton: ToggleButton
+    lateinit var invalidButton: ToggleButton
+
     private fun getVerseLabel(question: Question): String {
         return if (question.start == question.end) {
             "Verse ${question.start}"
@@ -34,32 +39,45 @@ class TQListCellFragment: ListCellFragment<Question>() {
 
     override val root = vbox {
         text(verseProperty)
-        text(questionProperty)
+        text(questionProperty) {
+            addClass("oqua-question-text")
+        }
         text(answerProperty)
         hbox {
-            val correct = togglebutton("Correct", toggleGroup) {
+            correctButton = togglebutton("Correct", toggleGroup) {
                 action {
-                    item.review = "correct"
+                    item.result.result = ResultValue.CORRECT
                 }
             }
-            val incorrect = togglebutton("Incorrect", toggleGroup) {
+            incorrectButton = togglebutton("Incorrect", toggleGroup) {
                 action {
-                    item.review = "incorrect"
+                    item.result.result = ResultValue.INCORRECT
                 }
             }
-            val invalid = togglebutton("Invalid", toggleGroup) {
+            invalidButton = togglebutton("Invalid Question", toggleGroup) {
                 action {
-                    item.review = "invalid"
+                    item.result.result = ResultValue.INVALID_QUESTION
                 }
             }
 
             itemProperty.onChange {
-                when (it?.review) {
-                    "correct" -> toggleGroup.selectToggle(correct)
-                    "incorrect" -> toggleGroup.selectToggle(incorrect)
-                    "invalid" -> toggleGroup.selectToggle(invalid)
-                    else -> toggleGroup.selectToggle(null)
+                when (it?.result?.result) {
+                    ResultValue.CORRECT -> toggleGroup.selectToggle(correctButton)
+                    ResultValue.INCORRECT -> toggleGroup.selectToggle(incorrectButton)
+                    ResultValue.INVALID_QUESTION -> toggleGroup.selectToggle(invalidButton)
+                    ResultValue.UNANSWERED -> toggleGroup.selectToggle(null)
                 }
+            }
+        }
+        textfield {
+            visibleWhen(invalidButton.selectedProperty())
+            managedWhen(visibleProperty())
+
+            itemProperty.onChange {
+                text = it?.result?.explanation
+            }
+            textProperty().onChange {
+                item?.result?.explanation = it ?: ""
             }
         }
     }
