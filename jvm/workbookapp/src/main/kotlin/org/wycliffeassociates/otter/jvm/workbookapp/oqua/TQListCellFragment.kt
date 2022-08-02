@@ -6,6 +6,8 @@ import javafx.scene.control.ToggleGroup
 import tornadofx.*
 
 class TQListCellFragment: ListCellFragment<Question>() {
+    private val viewModel: ChapterViewModel by inject()
+
     private val toggleGroup = ToggleGroup()
 
     private val questionProperty = Bindings.createStringBinding(
@@ -38,7 +40,15 @@ class TQListCellFragment: ListCellFragment<Question>() {
     }
 
     override val root = vbox {
-        text(verseProperty)
+        addClass("oqua-tq-card")
+
+        button(verseProperty) {
+            action {
+                itemProperty.value?.let {
+                    viewModel.jumpToVerse(it.start)
+                }
+            }
+        }
         text(questionProperty) {
             addClass("oqua-question-text")
         }
