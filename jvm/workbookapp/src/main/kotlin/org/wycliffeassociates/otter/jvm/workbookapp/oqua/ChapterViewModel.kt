@@ -1,8 +1,10 @@
 package org.wycliffeassociates.otter.jvm.workbookapp.oqua
 
 import javafx.beans.property.SimpleObjectProperty
+import org.wycliffeassociates.otter.common.audio.AudioFile
 import org.wycliffeassociates.otter.common.data.workbook.Workbook
 import org.wycliffeassociates.otter.common.device.IAudioPlayer
+import org.wycliffeassociates.otter.jvm.controls.model.VerseMarkerModel
 import org.wycliffeassociates.otter.jvm.workbookapp.di.IDependencyGraphProvider
 import org.wycliffeassociates.otter.jvm.workbookapp.ui.viewmodel.SettingsViewModel
 import org.wycliffeassociates.otter.jvm.workbookapp.ui.viewmodel.WorkbookDataStore
@@ -16,6 +18,8 @@ class ChapterViewModel : ViewModel() {
     lateinit var draftReviewRepo: DraftReviewRepository
 
     val settingsViewModel: SettingsViewModel by inject()
+
+    lateinit var verseMarkerModel: VerseMarkerModel
 
     val questions = observableListOf<Question>()
     val audioPlayerProperty = SimpleObjectProperty<IAudioPlayer>(null)
@@ -36,6 +40,7 @@ class ChapterViewModel : ViewModel() {
     }
 
     fun undock() {
+        closeChapterAudio()
         saveDraftReview()
     }
 
@@ -50,6 +55,10 @@ class ChapterViewModel : ViewModel() {
                 val audioPlayer = (app as IDependencyGraphProvider).dependencyGraph.injectPlayer()
                 audioPlayer.load(take.file)
                 audioPlayerProperty.set(audioPlayer)
+
+                val numberOfChunks = wbDataStore.chapter.chunks.count().blockingGet().toInt()
+
+                verseMarkerModel = VerseMarkerModel(AudioFile(take.file), numberOfChunks)
             }
     }
 
@@ -100,7 +109,23 @@ class ChapterViewModel : ViewModel() {
         }
     }
 
+    private fun closeChapterAudio() {
+        audioPlayerProperty.value.close()
+    }
+
     private fun saveDraftReview() {
         draftReviewRepo.writeDraftReviewFile(workbook, chapterNumber, questions)
+    }
+
+    fun jumpToVerse(verse: Int) {
+        if (verse > 0 && verse <= verseMarkerModel.markers.size) {
+            val frame = getVerseFrame(verse)
+            audioPlayerProperty.value.seek(frame)
+            audioPlayerProperty.value.play()
+        }
+    }
+
+    private fun getVerseFrame(verse: Int): Int {
+        return verseMarkerModel.markers[verse - 1].frame
     }
 }
